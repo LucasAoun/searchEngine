@@ -1,14 +1,16 @@
 const servicos = [
-        {name: 'Administração', id: 1, descricao: "Bem vindo ao seu serviço de administração"}, 
-        {name: 'Concurso Público', id: 2},
-        {name: 'Câmara dos vereadores', id: 3},
-        {name: 'Perda da chamada', id: 4},
-        {name: 'Chamada de aprovados', id:5}
-]
+        {name: 'Administração',
+         keypass: 'iptu administracao alecrimdourado',
+            link: 'https://www.google.com'}, 
 
+        {name: 'Concurso Público', keypass: 'concurso publico', link:'#'},
+        {name: 'Câmara dos vereadores', keypass: 'Camara dos vereadores', link:'#'},
+        {name: 'Perda da chamada', keypass: 'perda da chamada', link:'#'},
+        {name: 'Chamada de aprovados', keypass: 'chamada de aprovados', link:'#'}
+]
 const propsServico = servicos.map((servico)=>{
     return([   
-        servico.id,
+        servico.keypass,
         servico.name,
         servico.descricao
     ])
@@ -22,7 +24,7 @@ const inputSearch = document.getElementById('inputSearch')
 
 var showServicos = servicos.map(function(servico){
     return`
-        <li class="list">${servico.name}</li>
+        <li class="list"><a href="${servico.link}">${servico.name}</a></li>
     `
 })
 
@@ -45,21 +47,20 @@ searchForm.addEventListener('keyup' , (event)=>{
         listServicos()
     }else {
         // Se o input não estiver vazio o valor vai pra variavel query
-
         let query = inputSearch.value
 
-        // substitui e o valor fica com uma barrinha na frente, fiquei com preguiça de procurar o motivo disso
-        query = query.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
-        let queryRegExp = new RegExp('^' + query, 'i')
+        // remove acentos e caracteres especiais
+        query = query.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        let queryRegExp = new RegExp( query, 'i')
 
-        // Aqui crio um array novo que filtra os dados pelo nome de acordo com o valor do input
+        // Aqui crio um array novo que filtra os dados pelo keypass de acordo com o valor do input
         let newServicos = servicos.filter(item => {
-            return queryRegExp.test(item.name)
+            return queryRegExp.test(item.keypass)
         })
 
         // Faço o map igual antes
         let showNewServicos = newServicos.map(item => {
-            return `<li class="list">${item.name}</li>`
+            return `<li class="list"><a href="${item.link}">${item.name}</a></li>`
         })
 
         // E boto na tela
